@@ -2,9 +2,9 @@
 
 --- 
 
-This repository contains background information about multivariate amputation function `ampute` in package **mice**. Development of `ampute` takes place in the [**mice**](https://github.com/stefvanbuuren/mice) repository. This folder contains:
+This repository contains background information about multivariate amputation function `ampute` in R-package **mice**. Development of `ampute` takes place in the [**mice**](https://github.com/stefvanbuuren/mice) repository. This folder contains:
 
-1. [Vignette](https://rianneschouten.github.io/Amputation_with_Ampute/Vignette/ampute.html): Amputation with Ampute. After a short introduction to the multivariate amputation procedure, the vignette explains the use of `ampute` in a step by step approach. 
+1. [Vignette](https://rianneschouten.github.io/Amputation_with_Ampute/Vignette/ampute.html): *Generate missing values with ampute*. After a short introduction to the multivariate amputation procedure, the vignette explains the use of `ampute` in a step by step approach. 
 2. [Manuscript](https://rianneschouten.github.io/Amputation_with_Ampute/Manuscript%20article/Manuscript.pdf) for an article presenting the reason, use and working of the multivariate amputation procedure. The manuscript is currently under review at the Journal of Statistical Computation and Simulation.
 
 ---
