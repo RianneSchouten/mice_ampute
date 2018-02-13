@@ -1,65 +1,47 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[]{interact}
 
-\usepackage{graphicx, latexsym}
-\usepackage{setspace} 
-\usepackage[natbibapa]{apacite}
-\usepackage{amssymb, amsmath, amsthm}
-\usepackage{caption, subcaption}
-\usepackage{footnote}
-\usepackage{authblk}
-\usepackage{wrapfig,lipsum,booktabs}
-\usepackage{epstopdf}
-\usepackage[margin=0.98in]{geometry}
-\usepackage{tikz}
-\usepackage{listings}
-\usepackage{pdflscape}
+\usepackage{epstopdf}% To incorporate .eps illustrations using PDFLaTeX, etc.
+\usepackage{subfigure}% Support for small, `sub' figures and tables
 \usepackage{blkarray}
+\usepackage{setspace}
+\usepackage{tikz}
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary{positioning}
-\usepackage[]{hyperref}
-\hypersetup{
-    pdftitle={Manuscript},
-    pdfauthor={Rianne Schouten},
-    pdfsubject={Amputation, Imputation, Missing Data},
-    pdfkeywords={Amputation, Imputation, Missing Data},
-    bookmarksnumbered=true,     
-    bookmarksopen=true,         
-    bookmarksopenlevel=1,       
-    colorlinks=true,     
-    citecolor=black,    
-    linkcolor=black,   
-    pdfstartview=Fit,           
-    pdfpagemode=UseOutlines,      
-    pdfpagelayout=TwoPageRight
-}
 
-\onehalfspacing
+\usepackage[numbers,sort&compress]{natbib}% Citation support using natbib.sty
+\bibpunct[, ]{[}{]}{,}{n}{,}{,}% Citation support using natbib.sty
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}% Bibliography support using natbib.sty
+\makeatletter% @ now becomes a letter
+\def\NAT@def@citea{\def\@citea{\NAT@separator}}% Macro to suppress spaces between citations using natbib.sty
+\makeatother% @ becomes a symbol again
+
 \newcommand{\code}[1]{\texttt{#1}}
+\onehalfspacing
+
+\renewcommand{\refname}{Word Count: 6345}
 
 \begin{document}
 
-\title{\LARGE\bf Generating missing values for simulation purposes:\\ A multivariate amputation procedure}
-
-\author[1,2]{Rianne Schouten\thanks{Correspondence to: Rianne Schouten, Leuvenplein 238, 3584 LM Utrecht, the Netherlands. E-mail: r.m.schouten@uu.nl}}
-\author[1]{Peter Lugtig}
-\author[1]{Gerko Vink}
-\affil[1]{\small University of Utrecht, Department of Methodology and Statistics, Sjoerd Groenman building, Padualaan 14, 3584 CH Utrecht, The Netherlands}
-\affil[2]{\small DPA Professionals, Business Unit DPA IT, Team Data Science, Gatwickstraat 11, 1043 GL Amsterdam, The Netherlands}
-
-\date{}
+\title{\LARGE\bf Generating missing values for simulation purposes: A multivariate amputation procedure}
 \maketitle
+\author{
+\name{R.~M. Schouten\textsuperscript{a, b}\thanks{CONTACT R.~M. Schouten. E-mail: r.m.schouten@uu.nl} and Peter Lugtig\textsuperscript{a} and Gerko Vink\textsuperscript{a}}
+\affil{\textsuperscript{a}\small University of Utrecht, Department of Methodology and Statistics, Sjoerd Groenman building, Padualaan 14, 3584 CH Utrecht, The Netherlands; \textsuperscript{b}\small DPA Professionals, Business Unit DPA IT, Team Data Science, Gatwickstraat 11, 1043 GL Amsterdam, The Netherlands}
+}
 
 \begin{abstract}
-
 Missing data form a ubiquitous problem in scientific research, especially since most statistical analyses require complete data. To evaluate the performance of methods dealing with missing data, researchers perform simulation studies. An important aspect of these studies is the generation of missing values in a simulated, complete data set: the amputation procedure. We investigated the methodological validity and statistical nature of both the current amputation practice and a newly developed and implemented multivariate amputation procedure. We studied the performance of these methods and found that the current way of practice may not be appropriate for the generation of intuitive and reliable missing data problems. That is to say, important missing data characteristics such as the missingness percentage and the impact on statistical estimates influence each other. On the other hand, we demonstrate that the multivariate amputation procedure generates reliable amputations and allows for a proper regulation of missing data problems. The procedure has additional features to generate any missing data scenario precisely as intended. Hence, the multivariate amputation procedure is an efficient method to accurately evaluate missing data methodology.
-
 \end{abstract}
+
+\begin{keywords}
+Missing Data; Multiple Imputation; Multivariate Amputation; Evaluation
+\end{keywords}
 
 \section{Introduction}
 
 Missing data form a ubiquitous problem in scientific research, especially since most statistical analyses require complete data. Of all possible methods for dealing with missing data (e.g. weighting procedures, likelihood based methods), multiple imputation is an appealing solution since it results in complete data sets without losing information. This is because multiple imputation replaces the missing values with estimated values based on the observed data \citep{Rubin1987, Rubin1996, Stef2012}. Because multiple imputation is now available in several statistical software packages such as SPSS, Stata, SAS and R, the application of multiple imputation has become straightforward. 
 
-For a proper usage of methods dealing with missing data, a thorough and valid evaluation of the performance of these methods is vital. Because scientific research increasingly relies on missing data methodologies, it is important to understand under which circumstances a certain technique can and should be used. In addition, new missing data methods are continuously being developed and improved (e.g. \citealp{Vink2013}; \citealp{Fang2016}; \citealp{Kombo2016}). An accurate evaluation procedure is essential to know whether such a methodology functions properly. In this paper, we will focus on the process of generating missing values; a key procedure in the evaluation of the performance of missing data techniques. 
+For a proper usage of methods dealing with missing data, a thorough and valid evaluation of the performance of these methods is vital. Because scientific research increasingly relies on missing data methodologies, it is important to understand under which circumstances a certain technique can and should be used. In addition, new missing data methods are continuously being developed and improved (e.g. \citep{Vink2013, Fang2016, Kombo2016}). An accurate evaluation procedure is essential to know whether such a methodology functions properly. In this paper, we will focus on the process of generating missing values; a key procedure in the evaluation of the performance of missing data techniques. 
 
 In general, a missing data methodology is evaluated by means of simulations. Such simulation studies generally have four steps: 
 
@@ -72,7 +54,7 @@ In general, a missing data methodology is evaluated by means of simulations. Suc
 
 \noindent A key part in the evaluation of a missing data methodology is step 2; the generation of missing values. We refer to the process where missingness is induced in complete data as \textit{amputation}. 
 
-In current simulation studies, missing values are generated one variable at a time. With this univariate amputation approach, it can be difficult to appropriately control the characteristics of a missing data problem. For instance, \citet[][p. 11]{Seaman2012} intended to generate missing values for 70\% of the cases, but as a result of their approach 77\% of the cases were made incomplete. Another issue, that we will return to, is that the missing data structures do not reflect what was intended by the researcher. As a result, missing data methods may be evaluated under the wrong conditions and invalid conclusions about their inferential performance may be drawn. 
+In current simulation studies, missing values are generated one variable at a time. With this univariate amputation approach, it can be difficult to appropriately control the characteristics of a missing data problem. For instance, \citep[][p. 11]{Seaman2012} intended to generate missing values for 70\% of the cases, but as a result of their approach 77\% of the cases were made incomplete. Another issue, that we will return to, is that the missing data structures do not reflect what was intended by the researcher. As a result, missing data methods may be evaluated under the wrong conditions and invalid conclusions about their inferential performance may be drawn. 
 
 A valid amputation procedure is critical for the evaluation of missing data methods as it defines the missing data problem. Hence, we will put the methodological validity and the statistical nature of the current amputation practice under close investigation. Further, we will outline an alternative approach for generating any kind of missingness in any data set. Because our amputation procedure generates missing values in a multivariate way, issues with unreliable and inconsistent missing data generation can be overcome. Additionally, to make the multivariate amputation procedure available to a broad audience, we implemented the methodology as the function \code{ampute} \citep{AmputeVignette} in R-package \code{mice} \citep{Stef2011}. 
 
@@ -82,23 +64,19 @@ In the next section, we will explore the way researchers currently generate miss
 
 \subsection{\normalsize Univariate amputation}\label{current}
 
-In current evaluations of missing data methodologies, every researcher has to develop an ad-hoc approach to generating missing values. Most of these amputation methods are designed for a particular data set. For instance, \citet[][p. 4]{Sullivan2016} simulated data ``from the model $Y_i = 0.30T_i + \beta_2X_i + e_i$, with $X$ and $e \sim N(0, 1)$'' while others use real data such as ``the complete SHS data set [with variables] age, gender, history of diabetes, CVD status, and three serial measures of Scr [i.e. serum creatinine]'' \citep[][p. 3]{Shara2015}. Because the variables of these data sets have a specific covariance structure and tailor-made amputation approaches are used, the missing data situations these researchers study are unique.
+In current evaluations of missing data methodologies, every researcher has to develop an ad-hoc approach to generating missing values. Most of these amputation methods are designed for a particular data set. For instance, \citep[][p. 4]{Sullivan2016} simulated data `from the model $Y_i = 0.30T_i + \beta_2X_i + e_i$, with $X$ and $e \sim N(0, 1)$' while others use real data such as `the complete SHS data set [with variables] age, gender, history of diabetes, CVD status, and three serial measures of Scr [i.e. serum creatinine]' \citep[][p. 3]{Shara2015}. Because the variables of these data sets have a specific covariance structure and tailor-made amputation approaches are used, the missing data situations these researchers study are unique.
 
-All ad-hoc amputation techniques have in common that missing values are generated in a univariate way. Univariate amputation means that missingness is generated one variable at a time. For example, \citet{Sullivan2016} generated missing values in variable $Y$. For \citet[][p. 3]{Shara2015}, ``the outcome variable of interest was CVD'' and variable Scr was the incomplete variable. 
-In almost all real datasets, missingness is present for multiple variables. When such a situation needs to be mimicked in a simulation study, researchers repeatedly use a univariate amputation procedure for every variable that needs missing values. Missing values are generated first in $Y_1$, second in $Y_2$, and so on. In other words, the missingness on one variable is generated separately and independently from the missingness on any other variable. An example is the simulation study of \citet[][p. 3]{Kontopantelis2017} who describe that ``In the MAR setting, the probability to be missing for each of X, Y or Y' was independently set to be conditional on the exposure E with OR = 5.'' Other examples of studies where this procedure is followed are \citet{Abrahantes2011}, \citet{Kalaycioglu2016}, \citet{Pastor2003}. From here on, we will continue to refer to this class of approaches as \textit{stepwise univariate amputation}.
+All ad-hoc amputation techniques have in common that missing values are generated in a univariate way. Univariate amputation means that missingness is generated one variable at a time. For example, \citep{Sullivan2016} generated missing values in variable $Y$. For \citep[][p. 3]{Shara2015}, `the outcome variable of interest was CVD' and variable Scr was the incomplete variable. 
+
+In almost all real datasets, missingness is present for multiple variables. When such a situation needs to be mimicked in a simulation study, researchers repeatedly use a univariate amputation procedure for every variable that needs missing values. Missing values are generated first in $Y_1$, second in $Y_2$, and so on. In other words, the missingness on one variable is generated separately and independently from the missingness on any other variable. An example is the simulation study of\citep[][p. 3]{Kontopantelis2017} who describe that `In the MAR setting, the probability to be missing for each of X, Y or Y' was independently set to be conditional on the exposure E with OR = 5.' Other examples of studies where this procedure is followed are \citep{Abrahantes2011}, \citep{Kalaycioglu2016}, \citep{Pastor2003}. From here on, we will continue to refer to this class of approaches as \textit{stepwise univariate amputation}.
 
 \subsection{\normalsize Problems with stepwise univariate amputation}\label{problems}
 
-Probabilities to be missing on one or multiple variables can be independent, be related to eachother, or depend on values of covariates, or the variables themselved. The situation where the missingness does nto depend on any other variable in the datsset is referred to Missing Completely At Random \citep[i.e. MCAR,][]{Rubin1976}. Alternatively, the probability of being missing in a certain variable, say $Y_1$, can be based on the values of another variable, say $X_1$. This situation is called Missing At Random \citep[i.e. MAR,][]{Rubin1976}. \citet[][pp. 63, 64]{Stef2012} advised to relate the missingness on variable $Y_1$ to the values of $X_1$ by means of a continuous probability function, such as a logistic distribution function. However, in practice it is common to use the $X_1$ values to divide the participants into groups. Then, a specific probability value is specified for each of these groups (e.g. \citealp{Kontopantelis2017}; \citealp{Allison2000}; \citealp{Yuan2012}). A third type of missing data problem is created when the missingness in a variable is based on the variable values themselves. In that situation, the probability of a case being missing in variable $Y_1$ depends on its value on $Y_1$. We call this a Missing Not At Random mechanism \citep[i.e. MNAR,][pp. 31, 32]{Rubin1987, Stef2012}. In practice, researchers aim at generating at least one of the three missingness mechanisms to evaluate missing data methodology.
+Probabilities to be missing on one or multiple variables can be independent, be related to eachother, or depend on values of covariates, or the variables themselved. The situation where the missingness does nto depend on any other variable in the datsset is referred to Missing Completely At Random \citep[i.e. MCAR,][]{Rubin1976}. Alternatively, the probability of being missing in a certain variable, say $Y_1$, can be based on the values of another variable, say $X_1$. This situation is called Missing At Random \citep[i.e. MAR,][]{Rubin1976}. \citep[][pp. 63, 64]{Stef2012} advised to relate the missingness on variable $Y_1$ to the values of $X_1$ by means of a continuous probability function, such as a logistic distribution function. However, in practice it is common to use the $X_1$ values to divide the participants into groups. Then, a specific probability value is specified for each of these groups (e.g. \citep{Kontopantelis2017, Allison2000, Yuan2012}). A third type of missing data problem is created when the missingness in a variable is based on the variable values themselves. In that situation, the probability of a case being missing in variable $Y_1$ depends on its value on $Y_1$. We call this a Missing Not At Random mechanism \citep[i.e. MNAR,][pp. 31, 32]{Rubin1987, Stef2012}. In practice, researchers aim at generating at least one of the three missingness mechanisms to evaluate missing data methodology.
 
 Problems with stepwise univariate amputation appear especially - but not only - when multiple variables are amputed. The stepwise univariate amputation method is problematic for a proper regulation of the characteristics of missing data problems. For instance, consider a simple characteristic of any missing data problem: the percentage of cases with missing values. When a researcher generates 50\% MCAR missing values in variable $Y_1$, each case has a probability of 0.5 of being missing in $Y_1$. When the same procedure is followed for a second variable, say $Y_2$, the probability that a case has missing values on both $Y_1$ and $Y_2$ is $0.5 \cdot 0.5 = 0.25$. Hence, to reach a certain overlapping missingness percentage, a different individual probability has to be used. Fortunately, with MCAR missingness it is quite straightforward to estimate that probability (see Appendix A.1).
 
-\begin{figure}[t!]
-\centering
-\includegraphics[width=0.8\textwidth]{types_shifted.pdf}
-\caption{\small Standard ($b = 0$) and shifted ($b = 0.922$) right-tailed logistic distribution functions}
-\label{types_shifted}
-\end{figure}
+[Figure 1 about here.]
 
 With MAR missingness, on the other hand, it is challenging to determine how the probabilities should be adapted. For example, consider a situation where we induce missingness in variables $Y_1$ and $Y_2$ and base our amputations on the values of a normally distributed variable $X_1$. When we use the standard right-tailed logistic distribution function of Figure \ref{types_shifted}, we will induce 50\% missingness in variable $Y_1$ and 50\% in variable $Y_2$. However, the joint missingnes percentage (i.e. the percentage of cases with missing values on both $Y_1$ and $Y_2$) will become 29\% instead of the intuitive 25\% (Appendix A.2). To obtain the desired missingness percentage, we can move the logistic distribution function horizontally. For instance, the right-tailed distribution function can be shifted with 0.922 (Figure \ref{types_shifted}) which will result in 50\% joint missingness (Appendix A.2). Unfortunately, this calculation requires extensive mathematical knowledge and becomes even more complicated when missingness is created in three or more variables. 
 
@@ -110,155 +88,24 @@ When researchers are not aware of the consequences of using a stepwise univariat
 
 \subsection{\normalsize Multivariate amputation}\label{method}
 
-In an ideal situation, a missing data methodology is tested with a realistic missing data problem. For the generation of multivariate missing data scenarios that mimic real-life missingness, \citet[][pp. 110 - 113]{Jaap1999} proposed an idea for a multivariate amputation that has only been briefly discussed twice \citep{Stef2006, Jaap2003}. We build upon this method and in this paper develop an amputation procedure that can generate sophisticated missing data problems. 
+In an ideal situation, a missing data methodology is tested with a realistic missing data problem. For the generation of multivariate missing data scenarios that mimic real-life missingness, \citep[][pp. 110 - 113]{Jaap1999} proposed an idea for a multivariate amputation that has only been briefly discussed twice \citep{Stef2006, Jaap2003}. We build upon this method and in this paper develop an amputation procedure that can generate sophisticated missing data problems. 
+
+[Figure 2 about here.]
 
 Figure \ref{scheme} shows a schematic overview of the resulting  multivariate amputation procedure. The procedure requires a multivariate, complete data set of $n$ participants and $m$ variables. The result of the procedure, as can be seen on the right hand side of Figure \ref{scheme}, consists of multiple subsets with either incomplete or complete data. These subsets are merged to obtain an incomplete version of the original data set. 
 
 The amputation procedure starts with the researcher deciding what kind of missing data patterns he desires to establish. A missing data pattern is a particular combination of variables with missing values and variables remaining complete. For instance, a researcher may wish for some participants to have missing values on the first two variables, while for other participants values should be missing on variables 1 and 3. A practical example of a missing data pattern is a situation where some participants do not show up for the second round of a longitudinal study. Hence, part of the cases should have missing values on specifically the variables of the second wave. 
 
-Based on the number of missing data patterns $k$, the complete data set is randomly divided into $k$ subsets. The size of these subsets may vary. For example, we can assign a frequency value of $\frac{2}{3}$ to a first missing data pattern and a value of $\frac{1}{3}$ to a second missing data pattern. As a result, $\frac{2}{3}$ of the cases becomes part of subset 1. 
+Based on the number of missing data patterns $k$, the complete data set is randomly divided into $k$ subsets. The size of these subsets may vary. For example, we can assign a frequency value of $\frac{2}{3}$ to a first missing data pattern and a value of $\frac{1}{3}$ to a second missing data pattern. As a result, $\frac{2}{3}$ of the cases becomes part of subset 1. These participants are then called \textit{candidates} for missing data pattern 1. Since all cases are allocated to a subset and every case is candidate for one pattern only, the sum of the frequency values should be 1. Note that at this stage it is not yet decided whether the participants will receive missing values; they are merely candidates for one of the $k$ missing data patterns.  
 
-\begin{landscape}
-
-\thispagestyle{empty}
-\begin{figure}
-\hspace*{-1cm}
-\begin{tikzpicture}
-
-\node at (-0.2, 12.8) {1};
-\node at (-0.2, 12.2) {2};
-\node at (-0.2, 10) {$\vdots$};
-\node at (-0.2, 0.1) {n};
-
-\node at (0.2, 13.3) {$Y_1$};
-\node at (0.8, 13.3) {$Y_2$};
-\node at (1.5, 13.3) {$\dots$};
-\node at (2.5, 13.3) {$Y_m$};
-
-\draw[black] (0, 0) rectangle (3, 13);
-
-\node [above] at (1.5, 6.5) {complete};
-\node [below] at (1.5, 6.5) {data};
-
-\draw[black] (5.5, 0) rectangle (8.5, 2);
-\draw[black] (5.5, 9) rectangle (8.5, 13);
-\node at (7, 4) {$\vdots$};
-\draw[black] (5.5, 5.5) rectangle (8.5, 8.5);
-
-\node [above] at (7, 11) {candidates};
-\node [above] at (7, 7) {candidates};
-\node [above] at (7, 1.0) {candidates};
-\node [below] at (7, 11) {pattern 1};
-\node [below] at (7, 7) {pattern 2};
-\node [below] at (7, 1.0) {pattern k};
-
-\node at (5.7, 13.3) {$Y_1$};
-\node at (6.3, 13.3) {$Y_2$};
-\node at (7, 13.3) {$\dots$};
-\node at (8, 13.3) {$Y_m$};
-
-\draw [->] (3.2, 6.8) -- (5.3, 11);
-\draw [->] (3.2, 6.6) -- (5.3, 7);
-\draw [->] (3.2, 6.0) -- (5.3, 1);
-
-\node [above, rotate=65] at (4.4, 9.1) {freq 1};
-\node [above, rotate=12] at (4.4, 6.75) {freq 2};
-\node [above, rotate=-68] at (4.0, 4) {freq k};
-
-\draw[black] (11, 0) rectangle (12, 2);
-\draw[black] (11, 9) rectangle (12, 13);
-\node at (11.5, 4) {$\vdots$};
-\draw[black] (11, 5.5) rectangle (12, 8.5);
-
-\node at (11.5, 13.3) {sum score};
-
-\draw [->] (8.7, 11) -- (10.8, 11);
-\draw [->] (8.7, 7.0) -- (10.8, 7.0);
-\draw [->] (8.7, 0.8) -- (10.8, 0.8);
-
-\node [above] at (9.7, 11) {weights 1};
-\node [above] at (9.7, 7) {weights 2};
-\node [above] at (9.7, 0.8) {weights k};
-
-\draw[black] (16.5, 0) rectangle (19.5, 0.6);
-\draw[black] (16.5, 0.8) rectangle (19.5, 2.2);
-\draw[black] (16.5, 8.8) rectangle (19.5, 10);
-\draw[black] (16.5, 10.2) rectangle (19.5, 13);
-\node at (18, 4) {$\vdots$};
-\draw[black] (16.5, 5.3) rectangle (19.5, 6.2);
-\draw[black] (16.5, 6.4) rectangle (19.5, 8.5);
-
-\node [above] at (18, 11.2) {incomplete 1};
-\node [above] at (18, 9) {complete 1};
-\node [above] at (18, 7) {incomplete 2};
-\node [above] at (18, 5.4) {complete 2};
-\node [above] at (18, 1.2) {incomplete k};
-\node [above] at (18, 0) {complete k};
-
-\node at (16.7, 13.3) {$Y_1$};
-\node at (17.3, 13.3) {$Y_2$};
-\node at (18, 13.3) {$\dots$};
-\node at (19, 13.3) {$Y_m$};
-
-\node[above] at (12.7, 10.8) {type 1};
-\node[above] at (12.7, 6.8) {type 2};
-\node[above] at (12.7, 0.6) {type k};
-
-\node [above, rotate=12] at (15.2, 11.28) {$\frac{7}{10}$};
-\node [above, rotate=12] at (15.2, 7.2) {$\frac{7}{10}$};
-\node [above, rotate=15] at (15.2, 1.15) {$\frac{7}{10}$};
-\node [above, rotate=-30] at (15.2, 10) {$\frac{3}{10}$};
-\node [above, rotate=-22] at (15.2, 6.2) {$\frac{3}{10}$};
-\node [above, rotate=-10] at (15.3, 0.4) {$\frac{3}{10}$};
-
-\draw [->] (13.5, 11.02) -- (16.3, 11.5);
-\draw [->] (13.5, 11.00) -- (16.3, 9.4);
-\draw [->] (13.5, 7.04) -- (16.3, 7.4);
-\draw [->] (13.5, 7.00) -- (16.3, 5.8);
-\draw [->] (13.5, 0.86) -- (16.3, 1.4);
-\draw [->] (13.5, 0.82) -- (16.3, 0.3);
-
-\draw [decorate,decoration={brace, amplitude=20pt, mirror, raise=0pt},yshift=0pt]
-(19.7,0) -- (19.7, 13); 
-
-\node [above] at (21.2, 6.2) {merge};
-
-\draw[black] (22, 0) rectangle (25, 3.9);
-\draw[black] (22, 3.9) rectangle (25, 13);
-\draw[black] (22, 0) rectangle (25, 13);
-
-\node [above] at (23.5, 8.5) {incomplete};
-\node [below] at (23.5, 8.5) {data};
-
-\node [above] at (23.5, 2) {complete};
-\node [below] at (23.5, 2) {data};
-
-\node at (22.2, 13.3) {$Y_1$};
-\node at (22.8, 13.3) {$Y_2$};
-\node at (23.5, 13.3) {$\dots$};
-\node at (24.5, 13.3) {$Y_m$};
-
-\end{tikzpicture}
-\caption{Schematic overview of the multivariate amputation procedure}
-\label{scheme}
-\end{figure}
-\end{landscape}
-
-\begin{figure}[t!]
-\centering
-\includegraphics[width=0.8\textwidth]{types.pdf}
-\caption{\small Four variants of the logistic distribution function \citep[based on][p. 64]{Stef2012}}
-\label{types}
-\end{figure}
-
-\noindent These participants are then called \textit{candidates} for missing data pattern 1. Since all cases are allocated to a subset and every case is candidate for one pattern only, the sum of the frequency values should be 1. Note that at this stage it is not yet decided whether the participants will receive missing values; they are merely \textit{candidates} for one of the $k$ missing data patterns.  
+[Figure 3 about here.]
 
 Before we explain how to calculate a so-called weighted sum score for each candidate, it is important to know that the weighted sum scores are used to determine whether a data cell becomes missing or not: based on his weighted sum score, each candidate receives a probability of being missing for a given variable. For the allocation of these probabilities, we apply one of four possible logistic distribution functions on the weighted sum scores (Figure \ref{types}). It is possible to choose a different logistic distribution function for every missing data pattern. For instance, if a right-tailed (RIGHT) type of missingness is used, candidates with high weighted sum scores will receive a high probability of being missing. With a left-tailed (LEFT), centered (MID) or both-tailed (TAIL) missingness type, higher probability values are given to the candidates with low, average or extreme weighted sum scores respectively. Since the weighted sum scores determine the  missingness probabilities, the calculation of weighted sum scores is an important part of the amputation procedure. 
 
 Weighted sum scores are calculated as the outcome of a linear regression equation where the coefficients are determined by the researcher. The weighted sum score of case $i$ is calculated as follows:
-\begin{equation*}
+\[
 wss_i = w_1 \cdot y_{1i} + w_2 \cdot y_{2i} + ... + w_m \cdot y_{mi},
-\end{equation*}
+\]
 
 \noindent where $\{y_{1i}, y_{2i}, ..., y_{mi}\}$ is the set of variable values of case $i$ and $\{w_1, w_2, ..., w_m\}$ are the corresponding pre-specified weights. One weight per variable governs the impact of that variable on the formation of the sum score. Variables with higher weights will have a larger influence on the size of the weighted sum score than variables with lower weights. For instance, if variables $Y_1$ and $Y_2$ have weight values of 4 and 2 respectively, the importance of $Y_1$is twice as large as that of $Y_2$. The sign of the weight values influences whether a weighted sum score increases or decreases. A positive weight will increase the weighted sum score while a negative weight will have a decreasing effect. Furthermore, the weight values can value by missing data pattern. For example, variable $Y_1$ can have a weight value of 4 in the first pattern, but a weight value of -2 in the second pattern. 
 
@@ -268,7 +115,7 @@ An important feature of the multivariate amputation procedure lies in the possib
 
 With the multivariate amputation approach, we have a procedure to accurately mimic realistic missingness problems. It is straightforward to define various missing data patterns, the relative occurrence of these patterns (by defining the size of the subsets) and to manipulate the total missingness percentage for different variables. By offering the possibility to specify weight values, the multivariate amputation procedure also enables the fine-tuning of missing data mechanisms. 
 
-With the availability of R-function \code{ampute}, we deliver a means to overcome potential problems that may occur with the current way of practice. \code{ampute}'s default settings will generate 50\% MAR-RIGHT missingness. Further, all aspects of the multivariate amputation methodology as discussed above can be regulated for different types of data (categorical data will be made numeric). Moreover, a smart use of the weight matrix enables the generation of both MAR and MNAR mechanisms within the same data set. These and other features of \code{ampute} ensure the generation of complex - but realistic - missing data problems. For a detailed explanation about \code{ampute}'s arguments, we refer to \citet{AmputeVignette}.
+With the availability of R-function \code{ampute}, we deliver a means to overcome potential problems that may occur with the current way of practice. \code{ampute}'s default settings will generate 50\% MAR-RIGHT missingness. Further, all aspects of the multivariate amputation methodology as discussed above can be regulated for different types of data (categorical data will be made numeric). Moreover, a smart use of the weight matrix enables the generation of both MAR and MNAR mechanisms within the same data set. These and other features of \code{ampute} ensure the generation of complex - but realistic - missing data problems. For a detailed explanation about \code{ampute}'s arguments, we refer to \citep{AmputeVignette}.
 
 The next two sections will answer two research questions. First, we will evaluate the performance of \code{ampute}. By means of a simulation study, we will study whether \code{ampute} generates legitimate missingness mechanisms. Next, section \ref{compare} will compare the performance of stepwise univariate amputation and multivariate amputation. 
 
@@ -278,7 +125,7 @@ The next two sections will answer two research questions. First, we will evaluat
 
 We perform a model-based simulation by repeatedly drawing $N = 1,000$ cases from a multivariate normal distribution with \code{mvrnorm} in the package \code{MASS} \citep{MASS} in \code{R} \citep{R}. We use mean structure
 
-\begin{equation*}
+\[
 \mu = 
 \begin{blockarray}{cc}
 \begin{block}{c(c)}
@@ -287,11 +134,11 @@ Y_2&5\\
 X_1&10\\
 \end{block}
 \end{blockarray}\hspace{1mm},
-\end{equation*} 
+\]
 
 \noindent and covariance structure  
 
-\begin{equation*}
+\[
 \Sigma = 
 \begin{blockarray}{ccccc}
 & Y_1 & Y_2 & X_1\\
@@ -301,37 +148,15 @@ Y_2 & \rho & 1 & \rho \\
 X_1 & \rho & \rho & 1 \\
 \end{block}
 \end{blockarray}\hspace{1mm}. 
-\end{equation*}
+\]
 
 \noindent We vary the correlation $\rho \in \{0.1, 0.2, \dots, 0.9\}$. The number of Monte Carlo simulations is 1,000.
 
 We will examine the five different missing data scenarios from Table \ref{cond1}. For each scenario, we will generate joint missingness in variables $Y_1$ and $Y_2$ for 20\% of the cases. Note that this means that there are no cases with missing values on either $Y_1$ or $Y_2$. Rather, a case is complete or has missing values on the two $Y$ variables together. We leave $X_1$ an observed covariate (Table \ref{cond1}). 
 
-We categorize the five missing data scenarios as a MCAR, MAR, weak MAR, MNAR and weak MNAR kind of missingness. With MCAR missingness, the probability of being missing is 0.2 for each case. For the MAR and MNAR scenarios, the probabilities of being missing are based on the values of $X_1$ and $Y_1$ respectively, indicated by $1$ in weights column in Table \ref{cond1}. In case of weak MAR missingness, one part of the cases will be MCAR while the other part is based on the values of $X_1$. For the weak MNAR simulation condition, the weighted sum scores are determined by variables $Y_1$ and $X_1$ with ratio 1:5. For all scenarios, we generate right-tailed (RIGHT) missingness as displayed in Figure \ref{types}. 
+[Table 1 about here.]
 
-\begin{table}[b!]
-\centering
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.50\textwidth}
-\caption{\normalsize{Five simulation conditions for the evaluation of \code{ampute}}}
-  \label{cond1}
-\begin{tabular}{rrrrrrrrr}
-  \hline
-&& \multicolumn{3}{c}{pattern} && \multicolumn{3}{c}{weights} \\
-\cline{3-5} \cline{7-9}
-condition & & $Y_1$ & $Y_2$ & $X_1$ & & $Y_1$ & $Y_2$ & $X_1$ \\
-\hline 
-mcar & & 0 & 0 & 1 && 0 & 0 & 0 \\ [0.2cm]
-mar & & 0 & 0 & 1 && 0 & 0 & 1 \\ [0.2cm]
-weak mar & & 0 & 0 & 1 && 0 & 0 & 0 \\ 
- & & 0 & 0 & 1 && 0 & 0 & 1 \\[0.2 cm]
-mnar & & 0 & 0 & 1 && 1 & 0 & 0 \\ [0.2cm]
-weak mnar & & 0 & 0 & 1 && 1 & 0 & 5\\
-   \hline
-   \end{tabular}
-   \vspace{2mm}
-   \captionsetup{justification=justified,singlelinecheck=false,width = 0.50\textwidth}
-\caption*{\footnotesize{\textit{Note.} The pattern column displays whether variables are amputed ($0$) or remain complete ($1$). The weights column displays whether the variables influence the amputations.}}
-\end{table}
+We categorize the five missing data scenarios as a MCAR, MAR, weak MAR, MNAR and weak MNAR kind of missingness. With MCAR missingness, the probability of being missing is 0.2 for each case. For the MAR and MNAR scenarios, the probabilities of being missing are based on the values of $X_1$ and $Y_1$ respectively, indicated by $1$ in weights column in Table \ref{cond1}. In case of weak MAR missingness, one part of the cases will be MCAR while the other part is based on the values of $X_1$. For the weak MNAR simulation condition, the weighted sum scores are determined by variables $Y_1$ and $X_1$ with ratio 1:5. For all scenarios, we generate right-tailed (RIGHT) missingness as displayed in Figure \ref{types}. 
 
 For reasons of brevity, we focus our evaluation on the mean value of $Y_1$ ($\mathbb{E}_{Y_1}$). We calculate $\mathbb{E}_{Y_1}$ for every incomplete data set with complete case analysis (CCA) and after multiple imputation (MI) with predictive mean matching as the imputation technique (PMM; \code{mice.impute.pmm}). This last step, of imputing the variables again, is crucial to see whether exisiting missing data methodologies can recover the missing data we generate.
 For every replication, we generate $m = 5$ multiply imputed data sets and combine the $m$ completed data means into a single inference following Rubin's rules \citep[][pp. 76, 77]{Rubin1987}.
@@ -346,50 +171,9 @@ Because we know that MI yields valid inference when the observed data contains t
 
 \subsection{Results}
 
-\begin{figure}[t!]
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width = 1.0\linewidth]{Figure1a.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01a}
-\end{subfigure}
-\vspace{-1.1\baselineskip}
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width=1.0\linewidth]{Figure1b.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01b}
-\end{subfigure}
-\vspace{-1.1\baselineskip}
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width = 1.0\linewidth]{Figure1c.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01c}
-\end{subfigure}
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width=1.0\linewidth]{Figure1d.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01d}
-\end{subfigure}
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width = 1.0\linewidth]{Figure1e.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01e}
-\end{subfigure}
-\begin{subfigure}{.51\textwidth}
-\includegraphics[width=1.0\linewidth]{Figure1f.pdf}
-\vspace{-2.2\baselineskip}
-\subcaption{}
-\label{01f}
-\end{subfigure}
-{\caption{\normalsize Evaluation of R-function \code{ampute}. Coverage rate, bias and confidence interval width of $\mathbb{E}_{Y_1}$ estimates are shown for complete case analysis (a, c, e) and multiple imputation by predictive mean matching (b, d, f). The x-axis shows the data correlation $\rho \in \{0.1, 0.2, \dots, 0.9\}$.}
-\label{sim1}}
-\end{figure}
+[Figure 4 about here.]
 
-Figure \ref{sim1} shows the coverage rate, average bias and average confidence interval width of the estimates of $\mathbb{E}_{Y_1}$ for CCA and MI. We will discuss the results by examining Figures \ref{01a}/c, \ref{01b}/d and \ref{01e}/f respectively. Note that a numerical representation of this information is available from Table A in the Appendix B. 
+Figure \ref{sim1} shows the coverage rate, average bias and average confidence interval width of the estimates of $\mathbb{E}_{Y_1}$ for CCA and MI. We will discuss the results by examining Figures \ref{01a}/\ref{01c}, \ref{01b}/\ref{01d} and \ref{01e}/\ref{01f} respectively. Note that a numerical representation of this information is available from Table 5 in the Appendix B. 
 
 As expected, MCAR missingness results in unbiased estimates (Figure \ref{01a}) and coverage rates around 0.95 (Figure \ref{01c}). In line with our hypotheses, all MAR and MNAR missingness mechanisms produce negatively biased estimates (Figure \ref{01a}) and cause a drop in the coverage rates (Figure \ref{01c}). It is interesting to see that for missing data scenarios where $X_1$ governs the amputation procedure (i.e. with MAR, weak MAR and weak MNAR missingness), the size of the bias has a linear relation with data correlation $\rho$. This is not the case for MCAR and MNAR missingness, as these mechanisms do not depend on the values of $X_1$. 
 
@@ -423,97 +207,12 @@ We examine the consequences of the three amputation approaches for the evaluatio
 
 \subsection{\normalsize Results}\label{results2}
 
-\begin{table}[h!]
-\begin{subtable}{1\textwidth}
-\centering
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\normalsize Table 2: Generation of MAR missingness on 2 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
-  \label{sim2a}
-\begin{tabular}{rrrrrrrrrrrr}
-\hline
-&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
-\cline{3-4} \cline{6-8} \cline{10-12}
-cor & condition & int & obt & & bias & ciw & cov & & bias & ciw & cov \\ 
-\hline
- & standard SUA & 50 & 29 &  & -0.061 & 0.147 & 0.630 &  & -0.004 & 0.166 & 0.947 \\ 
-  0.2 & shifted SUA & 50 & 50 &  & -0.092 & 0.175 & 0.455 &  & 0.001 & 0.223 & 0.938 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.081 & 0.175 & 0.552 &  & -0.001 & 0.219 & 0.936 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 29 &  & -0.146 & 0.144 & 0.028 &  & -0.002 & 0.156 & 0.940 \\ 
-  0.5 & shifted SUA & 50 & 50 &  & -0.233 & 0.172 & 0.000 &  & -0.007 & 0.204 & 0.917 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.207 & 0.172 & 0.002 &  & -0.005 & 0.193 & 0.936 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 29 &  & -0.235 & 0.139 & 0.000 &  & -0.007 & 0.137 & 0.936 \\ 
-  0.8 & shifted SUA & 50 & 50 &  & -0.372 & 0.164 & 0.000 &  & -0.013 & 0.157 & 0.913 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.331 & 0.166 & 0.000 &  & -0.010 & 0.157 & 0.912 \\ 
-   \hline
-\end{tabular}
-\vspace{2mm}
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\footnotesize{\textit{Note.}  Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}}
-  \end{subtable}
-\bigskip
-\begin{subtable}{1\textwidth}
-\vspace{3mm}
-\centering
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\normalsize Table 3: Generation of MNAR missingness on 2 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
-  \label{sim2b}
-\begin{tabular}{rrrrrrrrrrrr}
-\hline
-&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
-\cline{3-4} \cline{6-8} \cline{10-12}
-cor & condition & int & obt & & bias & ciw & cov & & bias & ciw & cov \\ 
-\hline
- & standard SUA & 50 & 29 &  & -0.291 & 0.134 & 0.000 &  & -0.282 & 0.142 & 0.000 \\ 
-  0.2 & shifted SUA & 50 & 50 &  & -0.465 & 0.158 & 0.000 &  & -0.451 & 0.178 & 0.000 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.415 & 0.160 & 0.000 &  & -0.401 & 0.182 & 0.000 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 29 &  & -0.289 & 0.134 & 0.000 &  & -0.227 & 0.137 & 0.000 \\ 
-  0.5 & shifted SUA & 50 & 50 &  & -0.465 & 0.158 & 0.000 &  & -0.369 & 0.169 & 0.000 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.412 & 0.160 & 0.000 &  & -0.325 & 0.169 & 0.000 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 29 &  & -0.292 & 0.134 & 0.000 &  & -0.121 & 0.129 & 0.064 \\ 
-  0.8 & shifted SUA & 50 & 50 &  & -0.466 & 0.158 & 0.000 &  & -0.199 & 0.148 & 0.000 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.415 & 0.160 & 0.000 &  & -0.175 & 0.148 & 0.009 \\ 
-   \hline
-\end{tabular}
-\vspace{2mm}
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\footnotesize{\textit{Note.}  Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}}
-  \end{subtable}
-\bigskip
-\begin{subtable}{1\textwidth}
-\centering
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\normalsize Table 4: Generation of MAR missingness on 3 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
-  \label{sim2c}
-\begin{tabular}{rrrrrrrrrrrr}
-  \hline
-&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
-\cline{3-4} \cline{6-8} \cline{10-12}
-cor & condition & int & act & & bias & ciw & cov & & bias & ciw & cov \\ 
-\hline
- & standard SUA & 50 & 19 &  & -0.042 & 0.138 & 0.776 &  & 0.001 & 0.147 & 0.950 \\ 
-  0.2 & shifted SUA & 50 & 39 &  & -0.078 & 0.158 & 0.507 &  & -0.003 & 0.195 & 0.947 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.084 & 0.175 & 0.521 &  & -0.004 & 0.221 & 0.937 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 19 &  & -0.108 & 0.135 & 0.128 &  & -0.002 & 0.140 & 0.942 \\ 
-  0.5 & shifted SUA & 50 & 39 &  & -0.193 & 0.154 & 0.003 &  & -0.005 & 0.173 & 0.940 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.209 & 0.172 & 0.003 &  & -0.008 & 0.196 & 0.939 \\ 
-   \cline{2-12}
-   & standard SUA & 50 & 19 &  & -0.172 & 0.131 & 0.001 &  & -0.004 & 0.131 & 0.951 \\ 
-  0.8 & shifted SUA & 50 & 38 &  & -0.310 & 0.148 & 0.000 &  & -0.015 & 0.145 & 0.901 \\ 
-   & MA with \code{ampute} & 50 & 50 &  & -0.331 & 0.166 & 0.000 &  & -0.017 & 0.155 & 0.904 \\ 
-   \hline
-\end{tabular}
-\vspace{2mm}
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.93\textwidth}
-\subcaption*{\footnotesize{\textit{Note.}  Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}}
-  \end{subtable}
-  \vspace{-3.0\baselineskip}
-  \end{table}
+[Table 2 about here.]
 
+\noindent[Table 3 about here.]
+
+\noindent[Table 4 about here.]
+  
 First of all, the obtained missingness percentages are precisely as expected. Furthermore, Table 2 shows that although the missingness percentages of shifted SUA and MA are similar, there is a difference in the generated bias. For instance, when the correlations between $X_1$, $Y_1$ and $Y_2$ are $0.2$, the average bias with shifted SUA is $-0.092$ while it is $-0.081$ with MA. These findings show that although shifting the logistic distribution function results in the desired missingness percentage, the severity of the missing data problem has changed as well. In addition, the higher the correlation in the simulated data, the more apparent this effect becomes. For instance, compare the difference between $-0.233$ and $-0.207$ for $\rho = 0.5$ with the difference between $-0.372$ and $-0.331$ for $\rho = 0.8$. All these findings are in line with our hypotheses. Furthermore, Table 2 displays a relatively small confidence interval width for standard SUA ($0.147$ for $\rho = 0.2$). The other two approaches have larger and comparable confidence interval widths because their missingness percentages are larger. However, due to their difference in bias, the coverage rates of shifted SUA and MA have become different. An example of this situation occurs for $\rho = 0.2$. There, shifted SUA results in a coverage rate of $0.455$ while it is $0.552$ for MA.
 
 What we know from theory - MI yields valid inference for MAR missing data - can clearly be seen in Table 2. MI decreases the biases to zero. Interestingly, we notice that although the missingness proportions for shifted SUA and MA are similar, the 95\% confidence intervals do not always have an equal width. Probably, our finding that shifted SUA increases the severity of the missing data problem affects the performance of MI. Based on these results, a direct consequence for the coverage rates cannot be justified. However, we do see that it is possible that the performance of MI is different for shifted SUA than for MA. For instance, the coverage rate after MI is $0.917$ for shifted SUA and $0.936$ for MA when $\rho = 0.5$.
@@ -530,17 +229,25 @@ We implemented a multivariate amputation procedure into R-function \code{ampute}
 
 \subsection{\normalsize Discussion}
 
-Possible applications of multivariate amputation function \code{ampute} can be found in the field of survey research. Many studies describe the use of so-called planned missing data designs (e.g. \citealp{Enders}; \citealp{Wu}; \citealp{Bunting}), which are survey designs where ``missing data are used strategically to improve the validity of data collection.'' \citep[][p. 426]{Rhemtulla2012}. For instance, in order to reduce the respondent's burden, a large questionnaire is divided into multiple parts and each participant receives one or two of these parts. Such a multi-form design is almost always based on random chance (i.e. MCAR) which may give weird combinations of questions. With \code{ampute}, it is possible to create a logical combination of variables and to investigate the most efficient way to shorten a questionnaire. 
+Possible applications of multivariate amputation function \code{ampute} can be found in the field of survey research. Many studies describe the use of so-called planned missing data designs (e.g. \citep{Enders, Wu, Bunting}), which are survey designs where `missing data are used strategically to improve the validity of data collection.' \citep[][p. 426]{Rhemtulla2012}. For instance, in order to reduce the respondent's burden, a large questionnaire is divided into multiple parts and each participant receives one or two of these parts. Such a multi-form design is almost always based on random chance (i.e. MCAR) which may give weird combinations of questions. With \code{ampute}, it is possible to create a logical combination of variables and to investigate the most efficient way to shorten a questionnaire. 
 
-In addition, two-method measurements designs (e.g. \citealp{Graham2006}; \citealp{Rhemtulla2012}) could benefit from the availability of \code{ampute}. With this type of planned missing data designs, all participants fill in a questionnaire but only a small part of the participants is invited for a second measurement wave. Currently, the selection of these second wave participants is based on the values of one variable. As an alternative, \code{ampute} could combine the information of multiple variables. Possibly, this could enhance the use of observed information and reduce the number of participants without a loss of statistical power. 
+In addition, two-method measurements designs (e.g. \citep{Graham2006, Rhemtulla2012}) could benefit from the availability of \code{ampute}. With this type of planned missing data designs, all participants fill in a questionnaire but only a small part of the participants is invited for a second measurement wave. Currently, the selection of these second wave participants is based on the values of one variable. As an alternative, \code{ampute} could combine the information of multiple variables. Possibly, this could enhance the use of observed information and reduce the number of participants without a loss of statistical power. 
 
-With the availability of a multivariate amputation procedure, systematic evaluations of the performance of missing data methods are feasible. With R-function \code{ampute}, it is easy to assess in which situations which missing data methods are preferred. Besides, any usage of \code{ampute} is not restricted to evaluations of imputation techniques. Evaluations of weighting procedures (e.g. \citealp{Boeschoten2017}) and likelihood-based methods (e.g. \citealp{Little2002}; \citealp{Molenberghs2007}) can be done as well. Besides, scientific studies that examine the combination of multiple source data (e.g. \citealp{Waal2017}), different types of measurement error (e.g. \citealp{Waal2016}) or the application of missing data methods in software tools (e.g. \citealp{Horton}) could benefit from \code{ampute}.
+With the availability of a multivariate amputation procedure, systematic evaluations of the performance of missing data methods are feasible. With R-function \code{ampute}, it is easy to assess in which situations which missing data methods are preferred. Besides, any usage of \code{ampute} is not restricted to evaluations of imputation techniques. Evaluations of weighting procedures (e.g. \citep{Boeschoten2017}) and likelihood-based methods (e.g. \citep{Little2002, Molenberghs2007}) can be done as well. Besides, scientific studies that examine the combination of multiple source data (e.g. \citep{Waal2017}), different types of measurement error (e.g. \citep{Waal2016}) or the application of missing data methods in software tools (e.g. \citep{Horton}) could benefit from \code{ampute}.
 
 We focused our simulations on right-tailed MCAR, MAR and MNAR missingness. Additionally, it would be interesting to know how these and variants of these mechanisms behave in data structures other than the multivariate normal distribution. For instance, what happens with the accuracy of statistical estimates when variables have a non-linear relation? And how can \code{ampute} be used to generate a realistic multilevel missing data problem? Especially the effect of correlations on the outcome of the amputation procedure may need extra attention. Because correlations determine a large part of the effect of missing values on statistical inferences, and because correlations are important for the performance of missing data methods, it would be valuable to gain more insights into this aspect of multivariate amputation. 
 
 Overall, we emphasize the importance of a greater understanding of the behaviour of missing data mechanisms and their impact on the validity of both the generation and the handling of missing data. After all, for an accurate evaluation strategy, an efficient and reliable amputation procedure is just the beginning. 
 
-\bibliographystyle{apacite} 
+\section*{Disclosure statement}
+
+We hereby confirm that the manuscript has not been submitted to any other journal.
+
+\section*{Funding}
+
+This work was performed as part of a Master's thesis. 
+
+\bibliographystyle{tfnlm}
 \bibliography{References}
 
 \normalsize \section*{Appendices}
@@ -549,15 +256,15 @@ Overall, we emphasize the importance of a greater understanding of the behaviour
 
 Consider two discrete random variables $Z_1$ and $Z_2$ such that $z_{1i}$ is the probability of case $i$ to be missing on variable $Y_1$ and that $z_{2i}$ is the probability of case $i$ to be missing on variable $Y_2$. We give each case the same probability $p$ and we use this probability for both variables. Hence, 
 
-\begin{equation*}
+\[
 z_{1i} = z_{2i} = p \hspace{3mm} \forall i \in \{1, 2, ..., n\}. 
-\end{equation*}
+\]
 
 \noindent To know the expected proportion of missing values in $Y_1$, we calculate the expectation of $Z_1$. By definition \citep{Freund},  
 
-\begin{equation*}
+\[
 \mathbb{E}[X] = \sum_{i = 1}^n x_i \cdot f(x),  
-\end{equation*}
+\]
 
 \noindent and therefore
 
@@ -587,9 +294,9 @@ z_{1i} = z_{2i} = p \hspace{3mm} \forall i \in \{1, 2, ..., n\}.
 
 \noindent Furthermore, by definition \citep{Freund}, 
 
-\begin{equation*}
+\[
 \mathbb{E}[X^2] = \sum_{i = 1}^n x_i^2 \cdot f(x),  
-\end{equation*}
+\]
 
 \noindent and therefore, 
 
@@ -619,27 +326,27 @@ p = \sqrt{m}.
 
 Let $X$ be a continuous random variable with as its probability density function, 
 
-\begin{equation*}
+\[
 f(x) = \frac{1}{\sigma\sqrt{2\pi}}\cdot e^{-\frac{1}{2}(\frac{x - \mu}{\sigma})^2}.
-\end{equation*}
+\]
 
 \noindent Furthermore, let $Z_1$ and $Z_2$ be two continuous random variables such that $z_{1i}$ is the probability of case $i$ to be missing on a variable $Y_1$ and $z_{1i}$ is the probability of case $i$ to be missing on a variable $Y_2$. We relate the values of $Z_1$ and $Z_2$ to those of $X$ by the logistic distribution function. Hence, 
 
-\begin{equation*}
+\[
 Z_1 = Z_2 = g(X) = \frac{1}{1 + e^{-\alpha X - b}}.
-\end{equation*}
+\]
 
 \noindent By definition \citep{Freund}, the expected value of $g(X)$ is given by 
 
-\begin{equation*}
+\[
 \mathbb{E}[g(X)] = \int_{-\infty}^\infty g(x) \cdot f(x) dx
-\end{equation*}
+\]
 
 \noindent and therefore, 
 
-\begin{equation*}
+\[
 \mathbb{E}[Z_1] = \int_{-\infty}^\infty \frac{1}{1 + e^{-\alpha x - b}} \cdot \frac{1}{\sigma\sqrt{2\pi}}\cdot e^{-\frac{1}{2}(\frac{x - \mu}{\sigma})^2} dx.
-\end{equation*}
+\]
 
 \noindent When we choose $\sigma = 1$ and $\mu = 0$ such that $X$ has a standard normal distribution, and choose $\alpha = 1$ and $b = 0$ such that $g(X)$ is the standard logistic function, 
 
@@ -650,9 +357,9 @@ Z_1 = Z_2 = g(X) = \frac{1}{1 + e^{-\alpha X - b}}.
 
 \noindent In other words, the expected percentage of cases with a missing value on $Y_1$ is 50\%. The same holds for variable $Y_2$. However, the percentage of cases with missing values on both $Y_1$ and $Y_2$ will be different. Namely, in accordance with Equations \eqref{general}, \eqref{cov} and \eqref{similar}, and since 
 
-\begin{equation*}
+\[
 \mathbb{E}[{g(X)}^2] = \int_{-\infty}^\infty {g(x)}^2 \cdot f(x) dx, 
-\end{equation*}
+\]
 
 \noindent the proportion of cases with missing values on both $Y_1$ and $Y_2$ is
 
@@ -676,20 +383,124 @@ Z_1 = Z_2 = g(X) = \frac{1}{1 + e^{-\alpha X - b}}.
 
 \noindent In addition, an extension of Equation \eqref{twovariables} to a certain number of variables $r$ is possible by solving 
 
-\begin{equation*}
+\[
 \mathbb{E}[Z_1 \cdot Z_2 \cdot \hdots \cdot Z_r] = \mathbb{E}[{Z_1}^r] = \int_{-\infty}^\infty {\bigg(\frac{1}{1 + e^{-\alpha x - b}}\bigg)}^r \cdot \frac{1}{\sqrt{2\pi}}\cdot e^{-\frac{1}{2}x^2} dx.\\
-\end{equation*}
+\]
 
 \subsection*{Appendix B}
 
-See page 23.
+[Table 5 about here.]
 
-\begin{table}[h!]
-\centering
-\captionsetup{justification=justified,singlelinecheck=false,width = 0.73\textwidth}
-\caption*{\normalsize Table A: Evaluation of R-function \code{ampute}}
-  \label{A}
-\begin{tabular}{lrrrrrrrr}
+\subsection*{Appendix C}
+
+\code{ampute(data = sample, prop = 0.5, mech = ``MCAR'', patterns = c(0, 0, 1))\$amp}
+
+\vspace{5mm}
+\noindent \code{ampute(data = sample, prop = 0.5, mech = ``MAR'', type = ``RIGHT'', patterns = c(0, 0, 1), weights = c(0, 0, 1))\$amp}
+
+\vspace{5mm}
+\noindent \code{ampute(data = sample, prop = 0.5, mech = ``MNAR'', type = ``RIGHT'', patterns = c(0, 0, 1), weights = c(1, 0, 0))\$amp}
+
+\newpage
+
+\begin{table}
+\tbl{Five simulation conditions for the evaluation of \code{ampute}}
+{\begin{tabular}{rrrrrrrrr}
+  \hline
+&& \multicolumn{3}{c}{pattern} && \multicolumn{3}{c}{weights} \\
+\cline{3-5} \cline{7-9}
+condition & & $Y_1$ & $Y_2$ & $X_1$ & & $Y_1$ & $Y_2$ & $X_1$ \\
+\hline 
+mcar & & 0 & 0 & 1 && 0 & 0 & 0 \\ [0.2cm]
+mar & & 0 & 0 & 1 && 0 & 0 & 1 \\ [0.2cm]
+weak mar & & 0 & 0 & 1 && 0 & 0 & 0 \\ 
+ & & 0 & 0 & 1 && 0 & 0 & 1 \\[0.2 cm]
+mnar & & 0 & 0 & 1 && 1 & 0 & 0 \\ [0.2cm]
+weak mnar & & 0 & 0 & 1 && 1 & 0 & 5\\
+   \hline
+   \end{tabular}}
+\tabnote{\textit{Note.} The pattern column displays whether variables are amputed ($0$) or remain complete ($1$). The weights column displays whether the variables influence the amputations.}
+\label{cond1}
+\end{table}
+
+\begin{table}
+\tbl{Generation of MAR missingness on 2 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
+{\begin{tabular}{rrrrrrrrrrrr}
+\hline
+&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
+\cline{3-4} \cline{6-8} \cline{10-12}
+cor & condition & int & obt & & bias & ciw & cov & & bias & ciw & cov \\ 
+\hline
+ & standard SUA & 50 & 29 &  & -0.061 & 0.147 & 0.630 &  & -0.004 & 0.166 & 0.947 \\ 
+  0.2 & shifted SUA & 50 & 50 &  & -0.092 & 0.175 & 0.455 &  & 0.001 & 0.223 & 0.938 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.081 & 0.175 & 0.552 &  & -0.001 & 0.219 & 0.936 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 29 &  & -0.146 & 0.144 & 0.028 &  & -0.002 & 0.156 & 0.940 \\ 
+  0.5 & shifted SUA & 50 & 50 &  & -0.233 & 0.172 & 0.000 &  & -0.007 & 0.204 & 0.917 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.207 & 0.172 & 0.002 &  & -0.005 & 0.193 & 0.936 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 29 &  & -0.235 & 0.139 & 0.000 &  & -0.007 & 0.137 & 0.936 \\ 
+  0.8 & shifted SUA & 50 & 50 &  & -0.372 & 0.164 & 0.000 &  & -0.013 & 0.157 & 0.913 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.331 & 0.166 & 0.000 &  & -0.010 & 0.157 & 0.912 \\ 
+   \hline
+\end{tabular}}
+\tabnote{\textit{Note.} Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}
+  \label{sim2a}
+\end{table}  
+  
+\begin{table}
+\tbl{Generation of MNAR missingness on 2 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
+{\begin{tabular}{rrrrrrrrrrrr}
+\hline
+&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
+\cline{3-4} \cline{6-8} \cline{10-12}
+cor & condition & int & obt & & bias & ciw & cov & & bias & ciw & cov \\ 
+\hline
+ & standard SUA & 50 & 29 &  & -0.291 & 0.134 & 0.000 &  & -0.282 & 0.142 & 0.000 \\ 
+  0.2 & shifted SUA & 50 & 50 &  & -0.465 & 0.158 & 0.000 &  & -0.451 & 0.178 & 0.000 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.415 & 0.160 & 0.000 &  & -0.401 & 0.182 & 0.000 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 29 &  & -0.289 & 0.134 & 0.000 &  & -0.227 & 0.137 & 0.000 \\ 
+  0.5 & shifted SUA & 50 & 50 &  & -0.465 & 0.158 & 0.000 &  & -0.369 & 0.169 & 0.000 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.412 & 0.160 & 0.000 &  & -0.325 & 0.169 & 0.000 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 29 &  & -0.292 & 0.134 & 0.000 &  & -0.121 & 0.129 & 0.064 \\ 
+  0.8 & shifted SUA & 50 & 50 &  & -0.466 & 0.158 & 0.000 &  & -0.199 & 0.148 & 0.000 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.415 & 0.160 & 0.000 &  & -0.175 & 0.148 & 0.009 \\ 
+   \hline
+\end{tabular}}
+\tabnote{\textit{Note.} Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}
+  \label{sim2b}
+  \end{table}
+  
+\begin{table}
+\tbl{Generation of MAR missingness on 3 variables with standard and shifted stepwise univariate amputation (SUA) and multivariate amputation (MA)}
+{\begin{tabular}{rrrrrrrrrrrr}
+  \hline
+&& \multicolumn{2}{c}{\%mis} && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
+\cline{3-4} \cline{6-8} \cline{10-12}
+cor & condition & int & act & & bias & ciw & cov & & bias & ciw & cov \\ 
+\hline
+ & standard SUA & 50 & 19 &  & -0.042 & 0.138 & 0.776 &  & 0.001 & 0.147 & 0.950 \\ 
+  0.2 & shifted SUA & 50 & 39 &  & -0.078 & 0.158 & 0.507 &  & -0.003 & 0.195 & 0.947 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.084 & 0.175 & 0.521 &  & -0.004 & 0.221 & 0.937 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 19 &  & -0.108 & 0.135 & 0.128 &  & -0.002 & 0.140 & 0.942 \\ 
+  0.5 & shifted SUA & 50 & 39 &  & -0.193 & 0.154 & 0.003 &  & -0.005 & 0.173 & 0.940 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.209 & 0.172 & 0.003 &  & -0.008 & 0.196 & 0.939 \\ 
+   \cline{2-12}
+   & standard SUA & 50 & 19 &  & -0.172 & 0.131 & 0.001 &  & -0.004 & 0.131 & 0.951 \\ 
+  0.8 & shifted SUA & 50 & 38 &  & -0.310 & 0.148 & 0.000 &  & -0.015 & 0.145 & 0.901 \\ 
+   & MA with \code{ampute} & 50 & 50 &  & -0.331 & 0.166 & 0.000 &  & -0.017 & 0.155 & 0.904 \\ 
+   \hline
+\end{tabular}}
+\tabnote{\textit{Note.} Estimates of $\mathbb{E}_{Y_1}$ are evaluated with complete case analysis (cca) and multiple imputation (mi). Comparisons are done for the intended (int) and obtained (obt) missingness percentage (\%mis), the bias, confidence interval width (ciw) and coverage rate (cov) for correlations $\rho \in \{0.2, 0.5, 0.8\}$ (cor).}
+  \label{sim2c}
+  \end{table}
+  
+  \begin{table}
+\tbl{Evaluation of R-function \code{ampute}}
+{\begin{tabular}{lrrrrrrrr}
   \hline
 && \multicolumn{3}{c}{cca} && \multicolumn{3}{c}{mi} \\
 \cline{3-5} \cline{7-9}
@@ -745,20 +556,42 @@ mechanism & cor & bias & ciw & cov && bias & ciw & cov \\
    & 0.8 & -0.148 & 0.133 & 0.008 &  & -0.014 & 0.130 & 0.915 \\ 
    & 0.9 & -0.160 & 0.132 & 0.003 &  & -0.009 & 0.127 & 0.938 \\ 
    \hline
-\end{tabular}
-\vspace{2mm}
-\caption*{\footnotesize \textit{Note.} Bias, confidence interval width (ciw) and coverage rate (cov) of $\mathbb{E}_{Y_1}$ estimates are shown for complete case analysis (cca) and multiple imputation by predictive mean matching (mi). Data correlations are $\rho \in \{0.1, 0.2, \dots, 0.9\}$ (cor).}
+\end{tabular}}
+\tabnote{\textit{Note.} Bias, confidence interval width (ciw) and coverage rate (cov) of $\mathbb{E}_{Y_1}$ estimates are shown for complete case analysis (cca) and multiple imputation by predictive mean matching (mi). Data correlations are $\rho \in \{0.1, 0.2, \dots, 0.9\}$ (cor).}
+  \label{A}
 \end{table}
 
-\subsection*{Appendix C}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{types_shifted.eps}
+\caption{Standard ($b = 0$) and shifted ($b = 0.922$) right-tailed logistic distribution functions}
+\label{types_shifted}
+\end{figure}
 
-\code{ampute(data = sample, prop = 0.5, mech = ``MCAR'', patterns = c(0, 0, 1))\$amp}
+\setcounter{figure}{1}
+\begin{sidewaysfigure}
+\hspace*{-1cm}
+\includegraphics[width =1.0\linewidth]{Scheme_large.eps}
+\caption{Schematic overview of the multivariate amputation procedure}
+\label{scheme}
+\end{sidewaysfigure}
 
-\vspace{5mm}
-\noindent \code{ampute(data = sample, prop = 0.5, mech = ``MAR'', type = ``RIGHT'', patterns = c(0, 0, 1), weights = c(0, 0, 1))\$amp}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{types.eps}
+\caption{Four variants of the logistic distribution function \citep[based on][p. 64]{Stef2012}}
+\label{types}
+\end{figure}
 
-\vspace{5mm}
-\noindent \code{ampute(data = sample, prop = 0.5, mech = ``MNAR'', type = ``RIGHT'', patterns = c(0, 0, 1), weights = c(1, 0, 0))\$amp}
+\begin{figure}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1a.eps}}\label{01a}}\hspace{5pt}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1b.eps}}\label{01b}}\hspace{5pt}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1c.eps}}\label{01c}}\hspace{5pt}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1d.eps}}\label{01d}}\hspace{5pt}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1e.eps}}\label{01e}}\hspace{5pt}
+\subfigure[]{\resizebox*{.51\textwidth}{!}{\includegraphics[width = 1.0\linewidth]{Figure1f.eps}}\label{01f}}\hspace{5pt}
+\caption{Evaluation of R-function \code{ampute}. Coverage rate, bias and confidence interval width of $\mathbb{E}_{Y_1}$ estimates are shown for complete case analysis (a, c, e) and multiple imputation by predictive mean matching (b, d, f). The x-axis shows the data correlation $\rho \in \{0.1, 0.2, \dots, 0.9\}$}
+\label{sim1}
+\end{figure}
 
 \end{document}
-
