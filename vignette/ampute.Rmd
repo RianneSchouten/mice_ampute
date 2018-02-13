@@ -504,5 +504,5 @@ Brand, J.P.L. (1999). *Development, implementation and evaluation of multiple im
 Van Buuren, S. (2012). *Flexible imputation of missing data*
 Boca Raton, FL.: Chapman & Hall/CRC Press.
 
-Schouten, R.M., Lugtig, P.L., and Vink, G. (2017) *Generating missing values for simulation purposes: A multivariate amputation procedure* Under review. Available from: https://github.com/RianneSchouten/mice_ampute/manuscript/manuscript.pdf
+Schouten, R.M., Lugtig, P.L., and Vink, G. (2017) *Generating missing values for simulation purposes: A multivariate amputation procedure* Under review. Available from: [https://rianneschouten.github.io/mice_ampute/manuscript/manuscript.pdf](https://rianneschouten.github.io/mice_ampute/manuscript/manuscript.pdf)
 
