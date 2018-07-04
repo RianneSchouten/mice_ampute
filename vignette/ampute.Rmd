@@ -26,7 +26,7 @@ In general, a missing data methodology is evaluated by means of simulations. Suc
 
 An important aspect of these studies is the generation of missing values in a simulated, complete data set: the amputation procedure.
 
-We demonstrate the performance of `ampute` and its improvement over the current amputation practice in our article [*Generating missing values for simulation purposes: A multivariate amputation procedure*](https://rianneschouten.github.io/mice_ampute/manuscript/manuscript.pdf). In this article, we describe that the current amputation practice may not be appropriate for the generation of intuitive and reliable missing data problems. That is to say, important missing data characteristics such as the missingness percentage and the impact on statistical estimates influence each other. On the other hand, we demonstrate that the multivariate amputation procedure generates reliable amputations and allows for a proper regulation of missing data problems. The procedure has additional features to generate any missing data scenario precisely as intended. Hence, the multivariate amputation procedure is an efficient method to accurately evaluate missing data methodology.
+We demonstrate the performance of `ampute` and its improvement over the current amputation practice in our article [*Generating missing values for simulation purposes: A multivariate amputation procedure*](https://doi.org/10.1080/00949655.2018.1491577). In this article, we describe that the current amputation practice may not be appropriate for the generation of intuitive and reliable missing data problems. That is to say, important missing data characteristics such as the missingness percentage and the impact on statistical estimates influence each other. On the other hand, we demonstrate that the multivariate amputation procedure generates reliable amputations and allows for a proper regulation of missing data problems. The procedure has additional features to generate any missing data scenario precisely as intended. Hence, the multivariate amputation procedure is an efficient method to accurately evaluate missing data methodology.
 
 `ampute` is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice).
 
@@ -504,5 +504,5 @@ Brand, J.P.L. (1999). *Development, implementation and evaluation of multiple im
 Van Buuren, S. (2012). *Flexible imputation of missing data*
 Boca Raton, FL.: Chapman & Hall/CRC Press.
 
-Schouten, R.M., Lugtig, P.L., and Vink, G. (2017) *Generating missing values for simulation purposes: A multivariate amputation procedure* Under review. Available from: [https://rianneschouten.github.io/mice_ampute/manuscript/manuscript.pdf](https://rianneschouten.github.io/mice_ampute/manuscript/manuscript.pdf)
+- Rianne Margaretha Schouten, Peter Lugtig & Gerko Vink (2018): [Generating missing values for simulation purposes: A multivariate amputation procedure](https://doi.org/10.1080/00949655.2018.1491577), Journal of Statistical Computation and Simulation, DOI: 10.1080/00949655.2018.1491577
 
