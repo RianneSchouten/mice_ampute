@@ -1,7 +1,7 @@
 ---
 title: "Generate missing values with ampute"
 author: "Rianne Schouten [aut, cre], Peter Lugtig [ctb], Jaap Brand [ctb], Gerko Vink [aut]"
-date: "`r Sys.Date()`"
+date: "2018-02-13" #"`r Sys.Date()`"
 output: html_document
 ---
 
