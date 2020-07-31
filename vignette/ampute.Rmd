@@ -18,11 +18,9 @@ bibliography: References.bib
 knitr::opts_chunk$set(echo = TRUE, dev = "png", fig.align = "center")
 ```
 
----
-
 ### Introduction to mice::ampute
 
-We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. R-function [`ampute`](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute) is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). [Van Buuren's book [-@Stef2018]](https://stefvanbuuren.name/fimd/ch-introduction.html) gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is **the generation of missing values in complete data** and as such, the opposite of imputation. 
+We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. R-function [`ampute`](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute) is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). [Van Buuren's book [-@Stef2018]](https://stefvanbuuren.name/fimd/ch-introduction.html) gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is *the generation of missing values in complete data* and as such, the opposite of imputation. 
 
 This tutorial covers 
 
@@ -84,7 +82,7 @@ In short, `ampute`'s arguments are used for the following:
   6. weights: specify weights for the calculation of weighted sum scores
   7. type: choose a RIGHT, MID, TAIL or LEFT logistic distribution function
   
-Use the help function to obtain `ampute`'s [documentation](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute). The function is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). 
+Use the help function to read `ampute`'s [documentation](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute). The function is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). 
 
 ```{r, message = FALSE, warning = FALSE}
 library("mice")
