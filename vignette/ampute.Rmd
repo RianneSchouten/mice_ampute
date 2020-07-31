@@ -29,7 +29,7 @@ This tutorial covers
   * Some additional features
   * Special solutions for special cases
 
-For a theoretical justification and a demonstration of the method, we refer to [Schouten, Lugtig and Vink [-@Schouten2018a]](https://doi.org/10.1080/00949655.2018.1491577). The paper discusses how missing data methods are evaluated in four steps:
+For a theoretical justification and a demonstration of the method, we refer to [Schouten, Lugtig and Vink [-@Schouten2018a]](https://doi.org/10.1080/00949655.2018.1491577) (use this paper as your reference). The paper discusses how missing data methods are evaluated in four steps:
 
   1. A multivariate, complete dataset is simulated and considered the population of interest
   2. The complete dataset is made incomplete: amputation

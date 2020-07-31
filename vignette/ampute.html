@@ -1599,7 +1599,7 @@ div.tocify {
 
 <div id="introduction-to-miceampute" class="section level3">
 <h3>Introduction to mice::ampute</h3>
-<p>We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. R-function <a href="https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute"><code>ampute</code></a> is available in multiple imputation package <a href="https://github.com/stefvanbuuren/mice"><strong>mice</strong></a>. <a href="https://stefvanbuuren.name/fimd/ch-introduction.html">Van Buuren’s book <span class="citation">(2018)</span></a> gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is <strong>the generation of missing values in complete data</strong> and as such, the opposite of imputation.</p>
+<p>We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. R-function <a href="https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute"><code>ampute</code></a> is available in multiple imputation package <a href="https://github.com/stefvanbuuren/mice"><strong>mice</strong></a>. <a href="https://stefvanbuuren.name/fimd/ch-introduction.html">Van Buuren’s book <span class="citation">(2018)</span></a> gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is <em>the generation of missing values in complete data</em> and as such, the opposite of imputation.</p>
 <p>This tutorial covers</p>
 <ul>
 <li>The function’s underlying multivariate amputation procedure</li>
@@ -1607,7 +1607,7 @@ div.tocify {
 <li>Some additional features</li>
 <li>Special solutions for special cases</li>
 </ul>
-<p>For a theoretical justification and a demonstration of the method, we refer to <a href="https://doi.org/10.1080/00949655.2018.1491577">Schouten, Lugtig and Vink <span class="citation">(2018)</span></a>. The paper discusses how missing data methods are evaluated in four steps:</p>
+<p>For a theoretical justification and a demonstration of the method, we refer to <a href="https://doi.org/10.1080/00949655.2018.1491577">Schouten, Lugtig and Vink <span class="citation">(2018)</span></a> (use this paper as your reference). The paper discusses how missing data methods are evaluated in four steps:</p>
 <ol style="list-style-type: decimal">
 <li>A multivariate, complete dataset is simulated and considered the population of interest</li>
 <li>The complete dataset is made incomplete: amputation</li>
@@ -1644,7 +1644,7 @@ div.tocify {
 <li>weights: specify weights for the calculation of weighted sum scores</li>
 <li>type: choose a RIGHT, MID, TAIL or LEFT logistic distribution function</li>
 </ol>
-<p>Use the help function to obtain <code>ampute</code>’s <a href="https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute">documentation</a>. The function is available in multiple imputation package <a href="https://github.com/stefvanbuuren/mice"><strong>mice</strong></a>.</p>
+<p>Use the help function to read <code>ampute</code>’s <a href="https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute">documentation</a>. The function is available in multiple imputation package <a href="https://github.com/stefvanbuuren/mice"><strong>mice</strong></a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(<span class="st">&quot;mice&quot;</span>)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">help</span>(ampute)</a></code></pre></div>
 <div id="data" class="section level4">
