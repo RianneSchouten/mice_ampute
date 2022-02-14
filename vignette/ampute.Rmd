@@ -20,7 +20,9 @@ knitr::opts_chunk$set(echo = TRUE, dev = "png", fig.align = "center")
 
 ### Introduction to mice::ampute
 
-We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. R-function [`ampute`](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute) is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). [Van Buuren's book [-@Stef2018]](https://stefvanbuuren.name/fimd/ch-introduction.html) gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is *the generation of missing values in complete data* and as such, the opposite of imputation. 
+We present an R-function to generate missing values in complete datasets. Such an amputation procedure is useful to accurately evaluate the effect of missing data on analysis outcomes. 
+
+R-function `ampute` is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). [Van Buuren's book [-@Stef2018]](https://stefvanbuuren.name/fimd/ch-introduction.html) gives an extensive overview of missing data methodology and multiple imputation algorithm MICE. In this tutorial, we will focus on amputation, which is *the generation of missing values in complete data* and as such, the opposite of imputation. 
 
 This tutorial covers 
 
@@ -38,7 +40,7 @@ For a theoretical justification and a demonstration of the method, we refer to [
 
 Obiously, the second step in this procedure (amputation) is very important, since the amputation procedure determines the severity of the missing data problem. Before the existence of `ampute`, a proper amputation procedure was not available. Therefore, most simulation studies were performed with completely random missing data (MCAR). However, in real world problems the MCAR assumption is often unlikely and missing data methods need to handle MAR and MNAR mechanisms as well. Hence, we needed an amputation procedure that could create severe MAR and MNAR missingness: `ampute`!
 
-An example of how `ampute` can be used to evaluate missing data methods can be found in [Schouten and Vink [-@Schouten2018b]](https://doi.org/10.1177/0049124118799376). With `ampute` it is straightforward to generate missing values in multivariate datasets, with any desired proportion, varying underlying mechanisms, different missingness patterns and varying data distributions.
+An example of how `ampute` can be used to evaluate missing data methods can be found in [Schouten and Vink [-@Schouten2021]](https://doi.org/10.1177/0049124118799376). With `ampute` it is straightforward to generate missing values in multivariate datasets, with any desired proportion, varying underlying mechanisms, different missingness patterns and varying data distributions.
 
 We will now discuss the multivariate amputation procedure that underlies `ampute`. Then, we will discuss the function's arguments and some additional features. In the end, we propose solutions for special cases such as mixed missingness mechanisms and amputation in datasets with a large number of variables.
 
@@ -56,7 +58,7 @@ The core of the procedure lies in the **missingness patterns**. A missing data p
 
 All the data rows in a certain subset are candidates for a certain missing data pattern. Whether or not the candidates will become incomplete depends on a combination of factors. 
 
-One of those factors is the missingness **mechanism**. In case of MCAR missingness, all data rows have the same probability of being amputed. For MAR and MNAR missingness, we will use so-called **weighted sum scores**. In essence, MAR misingness occurs when the information about the missing data is in the observed data. In case of MNAR missingness, the information about the missing data is missing itself. For a discussion of how these mechanisms interact with observed data, see [Schouten and Vink [-@Schouten2018b]](https://doi.org/10.1177/0049124118799376).
+One of those factors is the missingness **mechanism**. In case of MCAR missingness, all data rows have the same probability of being amputed. For MAR and MNAR missingness, we will use so-called **weighted sum scores**. In essence, MAR misingness occurs when the information about the missing data is in the observed data. In case of MNAR missingness, the information about the missing data is missing itself. For a discussion of how these mechanisms interact with observed data, see [Schouten and Vink [-@Schouten2021]](https://doi.org/10.1177/0049124118799376).
 
 A weighted sum score is simply the outcome of a linear regression equation where the coefficients are determined by the user. We will discuss this a bit more below. For now it suffices to say that based on its weighted sum score, a candidate obtains a certain probability of being amputed. These probabilities are assigned using one of four **logistic distribution types**.
 
@@ -82,7 +84,7 @@ In short, `ampute`'s arguments are used for the following:
   6. weights: specify weights for the calculation of weighted sum scores
   7. type: choose a RIGHT, MID, TAIL or LEFT logistic distribution function
   
-Use the help function to read `ampute`'s [documentation](https://www.rdocumentation.org/packages/mice/versions/3.9.0/topics/ampute). The function is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). 
+Use the help function to read `ampute`'s documentation. The function is available in multiple imputation package [**mice**](https://github.com/stefvanbuuren/mice). 
 
 ```{r, message = FALSE, warning = FALSE}
 library("mice")
@@ -205,7 +207,7 @@ As the visualization shows, there are now four missing data patterns and the fir
 
 At this point in the procedure, we are able to generate missing data with a specified proportion, the missingness patterns of interest and in the desired relative occurence of those patterns. 
 
-We will now decide what kind of missingness **mechanism** we will implement. As said before, there are three mechanisms: MCAR, MAR and MNAR. In case of MCAR missingness, all data rows have the same probability of being amputed. With MAR misingness, the information about the missing data is in the observed data and with MNAR missingness, the information about the missing data is missing itself. We refer to [Schouten and Vink [-@Schouten2018b]](https://doi.org/10.1177/0049124118799376) for a more thorough discussion of missingness mechanisms.
+We will now decide what kind of missingness **mechanism** we will implement. As said before, there are three mechanisms: MCAR, MAR and MNAR. In case of MCAR missingness, all data rows have the same probability of being amputed. With MAR misingness, the information about the missing data is in the observed data and with MNAR missingness, the information about the missing data is missing itself. We refer to [Schouten and Vink [-@Schouten2021]](https://doi.org/10.1177/0049124118799376) for a more thorough discussion of missingness mechanisms.
 
 Argument `mech` in function `ampute` is a string with either `MCAR`, `MAR` or `MNAR`. As a default:
 
@@ -592,5 +594,7 @@ The diagram for pattern 4 will have 6 groups instead of 4, but with a similar di
 ### Go ahead and `ampute`!
 
 For questions or comments regarding `ampute` or the amputation methodology, contact Rianne Schouten. Find her [contact details here](https://rianneschouten.github.io/#contact).
+
+**News!** Multivariate amputation is now available in Python as well; in library [`pyampute`](https://rianneschouten.github.io/pyampute/build/html/index.html).
 
 ### References
